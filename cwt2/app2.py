@@ -27,8 +27,5 @@ elif vehicle == 'bicycle ':
 if st.button('predict'):
     features = np.array([[a, d, e, b, c]])
     result1 = mode.predict(features)
-    result = result1[0][0][0]
+    result = result1[0]
     st.write("Predicted Delivery Time in Minutes = ", result)
-
-# print("Predicted Delivery Time in Minutes = ", mode.predict(features))
-    # 21.0	4.5	26.471617	80.313564	26.481617	80.323564	0.0	1.0	12.0	1.492347

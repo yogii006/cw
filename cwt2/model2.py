@@ -1,5 +1,9 @@
 import numpy as np
 import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error
+import pandas as pd
 df = pd.read_csv("deliverytime.txt")
 # Set the earth's radius (in kilometers)
 R = 6371
@@ -40,21 +44,18 @@ x = np.array(df[["Delivery_person_Age",'Type_of_order','Type_of_vehicle',
                    "Delivery_person_Ratings", 
                    "distance"]])
 y = np.array(df[["Time_taken(min)"]])
-xtrain, xtest, ytrain, ytest = train_test_split(x, y, 
+X_train, X_test, y_train, y_test = train_test_split(x, y, 
                                                 test_size=0.10, 
                                                 random_state=42)
-# creating the LSTM neural network model
-from keras.models import Sequential
-from keras.layers import Dense
-model = Sequential()
-model.add(Dense(128, activation='relu', input_shape=(xtrain.shape[1], 1)))
-model.add(Dense(64, activation='relu'))
-model.add(Dense(25, activation='relu'))
-model.add(Dense(1))  # Output layer
+# Train the Random Forest model
+model = RandomForestRegressor(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
 
-model.summary()
-# training the model
-model.compile(optimizer='adam', loss='mean_squared_error')
-model.fit(xtrain, ytrain, batch_size=1, epochs=5)
+# Make predictions on the testing set
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+mse = mean_squared_error(y_test, y_pred)
+print("Mean Squared Error:", mse)
 import pickle
 pickle.dump(model,open('model.pkl','wb'))
